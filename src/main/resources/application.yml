@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: carts
+  config:
+    import: "optional:configserver:http://localhost:8070/"
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:carts
+    username: sa
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+h2:
+  console:
+    enabled: true
