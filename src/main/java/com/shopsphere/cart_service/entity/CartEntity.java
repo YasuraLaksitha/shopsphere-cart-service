@@ -2,10 +2,12 @@ package com.shopsphere.cart_service.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.antlr.v4.runtime.BaseErrorListener;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @Table(name = "tbl_cart")
@@ -14,7 +16,7 @@ public class CartEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartItemId;
+    private Long cartId;
 
     private List<Long> cartItemIds;
 
