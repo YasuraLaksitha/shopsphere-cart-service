@@ -6,6 +6,8 @@ import com.shopsphere.cart_service.dto.ContactInfoDTO;
 import com.shopsphere.cart_service.service.ICartService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +32,21 @@ public class CartController {
     @PostMapping("/user/add/products/{productName}")
     public ResponseEntity<CartDTO> addToCart(
             @NotEmpty(message = "product name is required") @PathVariable String productName,
+            @NotNull(message = "Item name is required") @PositiveOrZero(message = "Quantity should be positive or zero")
             @RequestParam Integer quantity) {
         return ResponseEntity.ok(cartService.addItemToCart(productName, quantity));
     }
 
-    @PostMapping("/user/remove/item")
+    @DeleteMapping("/user/remove/item")
     public ResponseEntity<CartDTO> removeFromCart(@Valid @RequestBody final CartItemDTO cartItem) {
         return ResponseEntity.ok(cartService.removeItemFromCart(cartItem));
+    }
+
+    @PatchMapping("/user/update/item/{itemName}")
+    public ResponseEntity<CartDTO> updateItemQuantity(
+            @NotEmpty(message = "Item name is required") @PathVariable final String itemName,
+            @NotNull(message = "Item name is required") @PositiveOrZero(message = "Quantity should be positive or zero")
+            @RequestParam Integer quantity) {
+        return ResponseEntity.ok(cartService.updateCartItemQuantity(itemName, quantity));
     }
 }

@@ -26,4 +26,12 @@ public interface ICartService {
      * @return - updated cart
      */
     CartDTO removeItemFromCart(CartItemDTO cartItem);
+
+    /**
+     *
+     * @param itemName - product name with the required quantity
+     * @param quantity - quantity to be updated
+     * @return - updated cart
+     */
+    CartDTO updateCartItemQuantity(String itemName, Integer quantity);
 }

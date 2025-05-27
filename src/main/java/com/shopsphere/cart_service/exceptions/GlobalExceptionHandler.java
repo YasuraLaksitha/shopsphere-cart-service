@@ -22,7 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private final ObjectMapper mapper;
 
     @ExceptionHandler(value = {ResourceAlreadyExistException.class})
-    public ResponseEntity<ErrorResponseDTO> handleResourceAlreadyExistException(final RuntimeException ex,
+    public ResponseEntity<ErrorResponseDTO> handleResourceAlreadyExistException(final ResourceAlreadyExistException ex,
                                                                                 final WebRequest request) {
         final ErrorResponseDTO responseDTO = ErrorResponseDTO.builder()
                 .status(HttpStatus.CONFLICT.name())
@@ -34,6 +34,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(value = {InsufficientResourcesException.class})
+    public ResponseEntity<ErrorResponseDTO> handleInsufficientResourcesException(final InsufficientResourcesException ex,
+                                                                                 final WebRequest request) {
+        final ErrorResponseDTO responseDTO = ErrorResponseDTO.builder()
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.name())
+                .message(ex.getMessage())
+                .path(request.getDescription(false))
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     @ExceptionHandler(value = {FeignException.class})
     public ResponseEntity<ErrorResponseDTO> handleFeignClientException(final FeignException ex) throws JsonProcessingException {
 
@@ -41,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         final ErrorResponseDTO errorResponseDTO = ErrorResponseDTO.builder()
                 .status(jsonNode.path("status").asText())
-                .message( jsonNode.path("message").asText())
+                .message(jsonNode.path("message").asText())
                 .path(jsonNode.path("path").asText())
                 .timestamp(LocalDateTime.now())
                 .build();

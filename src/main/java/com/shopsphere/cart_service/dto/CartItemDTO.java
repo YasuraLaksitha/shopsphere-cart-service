@@ -17,7 +17,11 @@ public class CartItemDTO {
     @Positive(message = "Item quantity should be positive")
     private Integer itemQuantity;
 
+    @NotNull(message = "Total item price is required")
+    @Positive(message = "Total item price should be positive")
+    private Double totalItemPrice;
+
     @NotNull(message = "Item price is required")
     @Positive(message = "Item price should be positive")
-    private Double totalItemPrice;
+    private Double pricePerUnit;
 }
