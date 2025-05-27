@@ -3,7 +3,7 @@ package com.shopsphere.cart_service.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.antlr.v4.runtime.BaseErrorListener;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "tbl_cart")
-@EntityListeners(value = BaseErrorListener.class)
+@EntityListeners(value = AuditingEntityListener.class)
 public class CartEntity extends BaseEntity {
 
     @Id

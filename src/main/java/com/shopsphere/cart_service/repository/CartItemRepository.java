@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItemEntity, Long> {
 
-    Optional<CartItemEntity> findByItemNameEqualsIgnoreCaseAndCartId(String createdBy,Long cartId);
+    Optional<CartItemEntity> findByItemNameEqualsIgnoreCaseAndCartId(String itemName, Long cartId);
 }
