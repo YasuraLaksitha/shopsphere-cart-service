@@ -19,6 +19,21 @@ h2:
   console:
     enabled: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    probes:
+      health:
+        enabled: true
+
 eureka:
   instance:
     prefer-ip-address: true
