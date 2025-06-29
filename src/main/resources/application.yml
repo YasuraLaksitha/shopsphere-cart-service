@@ -26,8 +26,8 @@ management:
     liveness-state:
       enabled: true
   endpoint:
-    probes:
-      health:
+    health:
+      probes:
         enabled: true
 
 eureka:
@@ -38,3 +38,8 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8071/eureka
+
+springdoc:
+  swagger-ui:
+    url: /shopsphere/carts/v3/api-docs
+    config-url: /shopsphere/carts/v3/api-docs/swagger-config

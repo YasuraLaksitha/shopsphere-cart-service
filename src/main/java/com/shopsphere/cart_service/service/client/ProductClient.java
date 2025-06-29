@@ -13,6 +13,6 @@ public interface ProductClient {
     @GetMapping("/api/public/get")
     ResponseEntity<ProductDTO> getByName(@RequestParam final String productName);
 
-    @GetMapping("/api/user/check/{productName}")
+    @GetMapping("/api/public/check/{productName}")
     ResponseEntity<Boolean> checkProductAvailability(@PathVariable final String productName, @RequestParam Integer quantity);
 }

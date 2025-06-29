@@ -54,7 +54,8 @@ public class CartServiceImpl implements ICartService {
             throw new ResourceAlreadyExistException("CartItem", "item name", existingCartItem.getItemName());
         });
 
-        if (Boolean.FALSE.equals(productClient.checkProductAvailability(productName, quantity).getBody()))
+        final Boolean isAvailable = productClient.checkProductAvailability(productName, quantity).getBody();
+        if (Boolean.FALSE.equals(isAvailable))
             throw new InsufficientResourcesException("Product", "product name", productName);
 
         final ProductDTO product = productClient.getByName(productName).getBody();
