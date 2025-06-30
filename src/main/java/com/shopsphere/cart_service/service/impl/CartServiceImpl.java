@@ -2,6 +2,7 @@ package com.shopsphere.cart_service.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopsphere.cart_service.constants.ApplicationDefaultConstaints;
+import com.shopsphere.cart_service.context.UserContext;
 import com.shopsphere.cart_service.dto.CartDTO;
 import com.shopsphere.cart_service.dto.CartItemDTO;
 import com.shopsphere.cart_service.dto.ProductDTO;
@@ -17,6 +18,7 @@ import com.shopsphere.cart_service.service.client.ProductClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,20 +36,20 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public CartEntity createNewCart() {
-        cartRepository.findByCreatedBy("CARTS_MS").ifPresent(existingCart -> {
+        cartRepository.findByCreatedBy(UserContext.get()).ifPresent(existingCart -> {
             throw new ResourceAlreadyExistException("Cart", "username", existingCart.getCreatedBy());
         });
 
         final CartEntity cartEntity = new CartEntity();
         cartEntity.setCartItemIds(new ArrayList<>());
-        cartEntity.setTotalCartPrice(ApplicationDefaultConstaints.TOTAL_CART_PRICE);
+        cartEntity.setTotalCartPrice(BigDecimal.valueOf(ApplicationDefaultConstaints.TOTAL_CART_PRICE));
 
         return cartRepository.save(cartEntity);
     }
 
     @Override
     public CartDTO addItemToCart(final String productName, final Integer quantity) {
-        final CartEntity cartEntity = cartRepository.findByCreatedBy("CARTS_MS")
+        final CartEntity cartEntity = cartRepository.findByCreatedBy(UserContext.get())
                 .orElseGet(this::createNewCart);
 
         cartItemRepository.findByItemNameEqualsIgnoreCaseAndCartId(productName, cartEntity.getCartId()).ifPresent(existingCartItem -> {
@@ -65,11 +67,11 @@ public class CartServiceImpl implements ICartService {
         cartItemEntity.setItemName(product.getProductName());
         cartItemEntity.setPricePerUnit(product.getProductPrice());
         cartItemEntity.setItemQuantity(quantity);
-        cartItemEntity.setTotalItemPrice(product.getProductPrice() * quantity);
+        cartItemEntity.setTotalItemPrice(product.getProductPrice().multiply(BigDecimal.valueOf(quantity)));
         cartItemEntity.setCartId(cartEntity.getCartId());
 
         final CartItemEntity itemEntity = cartItemRepository.save(cartItemEntity);
-        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice() + itemEntity.getTotalItemPrice());
+        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice().add(itemEntity.getTotalItemPrice()));
         cartEntity.getCartItemIds().add(itemEntity.getCartItemId());
         final CartEntity updatedCart = cartRepository.save(cartEntity);
 
@@ -92,7 +94,7 @@ public class CartServiceImpl implements ICartService {
                         () -> new ResourceNotFoundException("CartItem", "item name", cartItem.getItemName())
                 );
 
-        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice() - cartItemEntity.getTotalItemPrice());
+        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice().subtract(cartItemEntity.getTotalItemPrice()));
         cartEntity.getCartItemIds().remove(cartItemEntity.getCartItemId());
         cartItemRepository.delete(cartItemEntity);
 
@@ -123,12 +125,12 @@ public class CartServiceImpl implements ICartService {
             throw new InsufficientResourcesException("Product", "product name", itemName);
 
         cartItemEntity.setItemQuantity(quantity);
-        final Double oldTotalItemPrice = cartItemEntity.getTotalItemPrice();
-        cartItemEntity.setTotalItemPrice(cartItemEntity.getPricePerUnit() * quantity);
+        final BigDecimal oldTotalItemPrice = cartItemEntity.getTotalItemPrice();
+        cartItemEntity.setTotalItemPrice(cartItemEntity.getPricePerUnit().multiply(BigDecimal.valueOf(quantity)));
 
         final CartItemEntity itemEntity = cartItemRepository.save(cartItemEntity);
 
-        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice() - oldTotalItemPrice + itemEntity.getTotalItemPrice());
+        cartEntity.setTotalCartPrice(cartEntity.getTotalCartPrice().subtract(oldTotalItemPrice).add(itemEntity.getTotalItemPrice()));
         final CartEntity updatedCart = cartRepository.save(cartEntity);
 
         final List<CartItemDTO> cartItemDTOList = updatedCart.getCartItemIds().stream()
@@ -143,8 +145,8 @@ public class CartServiceImpl implements ICartService {
     }
 
     private CartEntity retrieveUserCart() {
-        return cartRepository.findByCreatedBy("CARTS_MS").orElseThrow(
-                () -> new ResourceNotFoundException("Cart", "username", "CARTS_MS")
+        return cartRepository.findByCreatedBy(UserContext.get()).orElseThrow(
+                () -> new ResourceNotFoundException("Cart", "username", UserContext.get())
         );
     }
 }

@@ -2,6 +2,8 @@ package com.shopsphere.cart_service.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class ProductDTO {
 
@@ -13,9 +15,9 @@ public class ProductDTO {
 
     private String productImage;
 
-    private Double productPrice;
+    private BigDecimal productPrice;
 
-    private Double productDiscountPrice;
+    private BigDecimal productDiscountPrice;
 
-    private Double productSpecialPrice;
+    private BigDecimal productSpecialPrice;
 }

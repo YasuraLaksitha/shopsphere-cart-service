@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,5 +21,5 @@ public class CartEntity extends BaseEntity {
 
     private List<Long> cartItemIds;
 
-    private Double totalCartPrice;
+    private BigDecimal totalCartPrice;
 }

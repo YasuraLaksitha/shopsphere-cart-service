@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.math.BigDecimal;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
@@ -21,7 +23,7 @@ public class CartItemEntity extends BaseEntity {
 
     private Integer itemQuantity;
 
-    private Double totalItemPrice;
+    private BigDecimal totalItemPrice;
 
-    private Double pricePerUnit;
+    private BigDecimal pricePerUnit;
 }
